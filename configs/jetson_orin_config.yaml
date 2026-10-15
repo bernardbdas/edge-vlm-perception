@@ -1,0 +1,24 @@
+system:
+  device: "jetson_orin_nano_8gb"
+  power_profile: "15W" # Options: 10W, 15W, 30W
+  target_fps: 30
+
+camera:
+  source: "nvarguscamerasrc ! video/x-raw(memory:NVMM), width=1920, height=1080, format=NV12, framerate=30/1 ! nvvidconv ! video/x-raw, format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink"
+  input_resolution: [640, 640]
+  use_mock_stream_fallback: true
+
+model:
+  name: "MobileVLM-3B-AWQ-INT4"
+  engine_path: "weights/mobilevlm_int4.engine"
+  quantization: "INT4_AWQ"
+  precision: "FP16"
+  nms_threshold: 0.45
+  confidence_threshold: 0.35
+
+ros2:
+  node_name: "edge_vlm_perception_node"
+  image_topic: "/camera/image_raw"
+  prompt_topic: "/perception/prompt"
+  detection_topic: "/perception/detections"
+  frame_id: "camera_optical_frame"

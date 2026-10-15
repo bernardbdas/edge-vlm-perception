@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  edge-perception:
+    build: .
+    container_name: edge-vlm-perception
+    ports:
+      - "8005:8005"
+    environment:
+      - TENSORRT_PRECISION=INT4
+      - ROS_DOMAIN_ID=42
+      - GST_DEBUG=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8005/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
